@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.db import models
 
+from users.models import User
+
 NULLABLE = {'blank': True, 'null': True}
 
 
@@ -33,3 +35,23 @@ class Lesson(models.Model):
         verbose_name_plural = 'уроки'
 
 
+class Payment(models.Model):
+
+    class METHOD_CHOICES(models.TextChoices):
+        CASH = ('наличные', 'наличные')
+        TRANSFER = ('перевод на счет', 'перевод на счет')
+
+    method = models.CharField(max_length=50, choices=METHOD_CHOICES.choices, verbose_name='способ оплаты')
+    date = models.DateField(auto_now_add=True, verbose_name='дата оплаты')
+    amount = models.FloatField(verbose_name='сумма оплаты')
+
+    course = models.ForeignKey(Course, to_field='title', db_column="course", on_delete=models.CASCADE, verbose_name='оплаченный курс', **NULLABLE)
+    lesson = models.ForeignKey(Lesson, to_field='id', db_column="lesson", on_delete=models.CASCADE, verbose_name='оплаченный урок', **NULLABLE)
+    user = models.ForeignKey(User, to_field='email', db_column="user", on_delete=models.CASCADE, verbose_name='пользователь')
+
+    def __str__(self):
+        return f'{self.id} {self.method} {self.date}'
+
+    class Meta:
+        verbose_name = 'оплата'
+        verbose_name_plural = 'оплата'
