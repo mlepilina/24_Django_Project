@@ -46,7 +46,6 @@ class Payment(models.Model):
     amount = models.FloatField(verbose_name='сумма оплаты')
 
     course = models.ForeignKey(Course, to_field='title', db_column="course", on_delete=models.CASCADE, verbose_name='оплаченный курс', **NULLABLE)
-    lesson = models.ForeignKey(Lesson, to_field='id', db_column="lesson", on_delete=models.CASCADE, verbose_name='оплаченный урок', **NULLABLE)
     user = models.ForeignKey(User, to_field='email', db_column="user", on_delete=models.CASCADE, verbose_name='пользователь')
 
     def __str__(self):

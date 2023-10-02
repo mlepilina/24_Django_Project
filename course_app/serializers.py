@@ -35,18 +35,11 @@ class CourseSerializer(serializers.ModelSerializer):
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    lesson_title = serializers.SerializerMethodField()
-
-    def get_lesson_title(self, obj):
-        if obj.lesson is None:
-            return 'все уроки'
-        return obj.lesson.title
 
     class Meta:
         model = Payment
         fields = [
             'date',
-            'lesson_title',
             'course',
             'method',
             'amount',
