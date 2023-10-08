@@ -18,5 +18,6 @@ class User(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
-    email_confirmed = models.BooleanField('Почта пользователя подтверждена', default=False)
-    email_confirm_key = models.CharField(verbose_name='Ключ подтверждения для почты пользователя', max_length=250, **NULLABLE)
+    @property
+    def is_moderator(self):
+        return self.groups.filter(name='moderator').exists()

@@ -14,6 +14,7 @@ class LessonSerializer(serializers.ModelSerializer):
             'description',
             'video_link',
             'course',
+            'owner',
         ]
 
 
@@ -31,6 +32,7 @@ class CourseSerializer(serializers.ModelSerializer):
             'description',
             'number_of_lessons',
             'lessons',
+            'owner',
         ]
 
 
@@ -43,5 +45,5 @@ class PaymentSerializer(serializers.ModelSerializer):
             'course',
             'method',
             'amount',
-            'user',
+            'client',
         ]

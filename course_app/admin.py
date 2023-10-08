@@ -15,4 +15,6 @@ class LessonAdmin(admin.ModelAdmin):
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
-    list_display = ('course', 'user', 'date')
+    list_display = ('course', 'client', 'date')
+
+
