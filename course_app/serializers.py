@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from course_app.models import Course, Lesson, Payment
+from course_app.models import Course, Lesson, Payment, Subscription
+from course_app.validators import LinkValidator
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -16,13 +17,27 @@ class LessonSerializer(serializers.ModelSerializer):
             'course',
             'owner',
         ]
+        validators = [
+            LinkValidator(fields=['video_link', 'description']),
+        ]
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Subscription
+        fields = [
+            'subscriber',
+            'course',
+            'is_active',
+        ]
 
 
 class CourseSerializer(serializers.ModelSerializer):
 
-    lessons = LessonSerializer(source='lesson_set', many=True)
-    number_of_lessons = serializers.IntegerField(source='lesson_set.all.count')
-
+    lessons = LessonSerializer(source='lesson_set', many=True, read_only=True)
+    number_of_lessons = serializers.IntegerField(source='lesson_set.all.count', read_only=True)
+    is_subscribed = serializers.SerializerMethodField(method_name='qwe')
 
     class Meta:
         model = Course
@@ -33,7 +48,12 @@ class CourseSerializer(serializers.ModelSerializer):
             'number_of_lessons',
             'lessons',
             'owner',
+            'is_subscribed'
         ]
+        # validators = [LinkValidator(field='description')]
+
+    def qwe(self, obj):
+        return obj.subscription_set.filter(subscriber=self._context['view'].request.user, is_active=True).exists()
 
 
 class PaymentSerializer(serializers.ModelSerializer):

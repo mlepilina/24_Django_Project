@@ -1,0 +1,24 @@
+[
+{
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+        "password": "pbkdf2_sha256$600000$r46wd9nEmCljdpA5UHOpuX$Tpot2PNUFz9K+qYbrj6Q8ETq+2uwkJexF90aE8uKoKM=",
+        "last_login": null,
+        "is_superuser": false,
+        "first_name": "",
+        "last_name": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2023-09-28T11:17:44Z",
+        "email": "maria@mail.ru",
+        "surname": "Maria",
+        "name": "Maria",
+        "phone": null,
+        "avatar": "",
+        "city": null,
+        "groups": [],
+        "user_permissions": []
+    }
+}
+]

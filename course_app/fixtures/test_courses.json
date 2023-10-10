@@ -1,0 +1,22 @@
+[
+{
+    "model": "course_app.course",
+    "pk": 6,
+    "fields": {
+        "title": "Веб-дизайнер с нуля",
+        "preview": "",
+        "description": "",
+        "owner": "maria@mail.ru"
+    }
+},
+{
+    "model": "course_app.course",
+    "pk": 7,
+    "fields": {
+        "title": "Фронтенд-разработчик с нуля",
+        "preview": "",
+        "description": "",
+        "owner": "maria@mail.ru"
+    }
+}
+]
