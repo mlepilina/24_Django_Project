@@ -13,6 +13,7 @@ from course_app.serializers import CourseSerializer, LessonSerializer, PaymentSe
 
 
 class CourseViewSet(viewsets.ModelViewSet):
+    """ Viewset for courses """
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
     permission_classes = [IsAuthenticated]
@@ -120,3 +121,16 @@ class PaymentListAPIView(generics.ListAPIView):
 class PaymentCreateAPIView(generics.CreateAPIView):
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        new_payment = serializer.save()
+        new_payment.client = self.request.user
+        new_payment.save()
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        new_payment = response.data.serializer.instance
+        if new_payment.method == Payment.METHOD_CHOICES.TRANSFER:
+            response.data['link'] = new_payment.course.get_link_for_payment()
+
+        return response

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'rest_framework_simplejwt',
+    'drf_yasg',
 
     'course_app',
     'users',
@@ -161,3 +162,5 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
+
+STRIPE_API = 'sk_test_51NzyebKMrwbyK48XbLylbxG64ZeC3HOM4c4ZCd7Mde3dsUQc5If2IdSqinXHRRGLVqMgktH4Qq6OVgUNMgkDkVEi002xEJvWWq'

@@ -1,4 +1,5 @@
-from rest_framework import serializers
+import stripe
+from django.conf import settings
 from django.db import models
 
 from users.models import User
@@ -14,12 +15,29 @@ class Course(models.Model):
     owner = models.ForeignKey(User, to_field='email', db_column="owner", on_delete=models.CASCADE,
                               verbose_name='создатель курса', **NULLABLE)
 
+    stripe_price = models.CharField(max_length=100, verbose_name='Цена в Stripe', **NULLABLE)
+    link_for_payment = models.CharField(max_length=100, verbose_name='ссылка для оплаты в системе stripe', **NULLABLE)
+
     def __str__(self):
         return f'{self.title}'
 
     class Meta:
         verbose_name = 'курс'
         verbose_name_plural = 'курсы'
+
+    def get_link_for_payment(self):
+        """Получить ссылку на оплату в Stripe."""
+        if not self.link_for_payment:
+            stripe.api_key = settings.STRIPE_API
+            link = stripe.PaymentLink.create(
+                line_items=[
+                    {"price": self.stripe_price, "quantity": 1}
+                ]
+            )
+            self.link_for_payment = link['url']
+            self.save()
+
+        return self.link_for_payment
 
 
 class Lesson(models.Model):
@@ -46,7 +64,13 @@ class Payment(models.Model):
         CASH = ('наличные', 'наличные')
         TRANSFER = ('перевод на счет', 'перевод на счет')
 
+    class STATUS(models.TextChoices):
+        ADD = ('add', 'создана')
+        SUCCESS = ('success', 'успешно оплаченo')
+        FAIL = ('fail', 'оплата не удалась')
+
     method = models.CharField(max_length=50, choices=METHOD_CHOICES.choices, verbose_name='способ оплаты')
+    status = models.CharField(max_length=50, choices=STATUS.choices, default=STATUS.ADD, verbose_name='статус оплаты')
     date = models.DateField(auto_now_add=True, verbose_name='дата оплаты')
     amount = models.FloatField(verbose_name='сумма оплаты')
 
