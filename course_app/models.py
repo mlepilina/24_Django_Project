@@ -88,8 +88,8 @@ class Payment(models.Model):
 
 class Subscription(models.Model):
 
-    subscriber = models.ForeignKey(User, to_field='email', db_column="subscriber", on_delete=models.CASCADE, verbose_name='подписчик')
-    course = models.ForeignKey(Course, to_field='title', db_column="course", on_delete=models.CASCADE, verbose_name='курс подписки')
+    subscriber = models.ForeignKey(User, related_name='subscriptions', to_field='email', db_column="subscriber", on_delete=models.CASCADE, verbose_name='подписчик')
+    course = models.ForeignKey(Course, related_name='subscriptions', to_field='title', db_column="course", on_delete=models.CASCADE, verbose_name='курс подписки')
     is_active = models.BooleanField(default=False, verbose_name='подписан')
 
     def __str__(self):

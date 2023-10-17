@@ -3,6 +3,8 @@ from rest_framework import serializers
 from course_app.models import Course, Lesson, Payment, Subscription
 from course_app.validators import LinkValidator
 
+from course_app.tasks import notice_about_update
+
 
 class LessonSerializer(serializers.ModelSerializer):
 
@@ -20,6 +22,12 @@ class LessonSerializer(serializers.ModelSerializer):
         validators = [
             LinkValidator(fields=['video_link', 'description']),
         ]
+
+    def save(self, **kwargs):
+        lesson = super().save(**kwargs)
+        notice_about_update.delay(lesson.course.id)
+
+        return lesson
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
