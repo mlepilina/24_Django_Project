@@ -29,9 +29,10 @@ class Course(models.Model):
         """Получить ссылку на оплату в Stripe."""
         if not self.link_for_payment:
             stripe.api_key = settings.STRIPE_API
+            price = stripe.Price.retrieve(self.stripe_price)
             link = stripe.PaymentLink.create(
                 line_items=[
-                    {"price": self.stripe_price, "quantity": 1}
+                    {"price": price.id, "quantity": 1}
                 ]
             )
             self.link_for_payment = link['url']
