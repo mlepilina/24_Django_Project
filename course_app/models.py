@@ -15,7 +15,7 @@ class Course(models.Model):
     owner = models.ForeignKey(User, to_field='email', db_column="owner", on_delete=models.CASCADE,
                               verbose_name='создатель курса', **NULLABLE)
 
-    stripe_price = models.CharField(max_length=100, verbose_name='Цена в Stripe', **NULLABLE)
+    stripe_price = models.PositiveSmallIntegerField(verbose_name='Цена в Stripe', **NULLABLE)
     link_for_payment = models.CharField(max_length=100, verbose_name='ссылка для оплаты в системе stripe', **NULLABLE)
 
     def __str__(self):
@@ -29,7 +29,17 @@ class Course(models.Model):
         """Получить ссылку на оплату в Stripe."""
         if not self.link_for_payment:
             stripe.api_key = settings.STRIPE_API
-            price = stripe.Price.retrieve(self.stripe_price)
+
+            # Создаём цену в Stripe
+            price = stripe.Price.create(
+                currency="usd",
+                product_data={
+                    "name": self.title
+                },
+                unit_amount=self.stripe_price
+
+            )
+            # Получаем ссылку на оплату
             link = stripe.PaymentLink.create(
                 line_items=[
                     {"price": price.id, "quantity": 1}
