@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import os
 from datetime import timedelta
 from pathlib import Path
 
@@ -86,9 +87,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django_project_24',
-        'USER': 'postgres',
-        'PASSWORD': '12345'
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': int(os.getenv('DB_PORT')),
     }
 }
 
@@ -166,12 +169,15 @@ SIMPLE_JWT = {
 
 STRIPE_API = 'sk_test_51NzyebKMrwbyK48XbLylbxG64ZeC3HOM4c4ZCd7Mde3dsUQc5If2IdSqinXHRRGLVqMgktH4Qq6OVgUNMgkDkVEi002xEJvWWq'
 
+REDIS_HOST = os.getenv('REDIS_HOST')
+REDIS_PORT = int(os.getenv('REDIS_PORT'))
+REDIS_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}'
 
 # URL-адрес брокера сообщений
-CELERY_BROKER_URL = 'redis://localhost:6379' # Например, Redis, который по умолчанию работает на порту 6379
+CELERY_BROKER_URL = REDIS_URL
 
 # URL-адрес брокера результатов, также Redis
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = REDIS_URL
 
 # Часовой пояс для работы Celery
 CELERY_TIMEZONE = TIME_ZONE

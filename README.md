@@ -18,3 +18,10 @@ celery -A config worker -l DEBUG -P eventlet
 ```shell
 celery -A config beat -l info
 ```
+
+
+## Запуск Docker
+
+```shell
+docker-compose up --build
+```

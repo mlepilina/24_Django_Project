@@ -1,0 +1,71 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: qwe
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_DB: django_project_24
+    volumes:
+      - pg_data:/var/lib/postgresql/data/pgdata
+    ports:
+      - '5433:5432'
+
+  redis:
+    image: redis
+    ports:
+      - '6378:6379'
+
+  app:
+    build: .
+    environment:
+      DB_PASSWORD: qwe
+      DB_USER: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: django_project_24
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+    command:
+      - /bin/bash
+      - -c
+      - |
+        python manage.py migrate
+        python manage.py runserver 0.0.0.0:8000
+
+    ports:
+      - '8001:8000'
+
+  celery:
+    build: .
+    environment:
+      DB_PASSWORD: qwe
+      DB_USER: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: django_project_24
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+    command: celery -A config worker -l DEBUG
+
+  celery_beat:
+    build: .
+    environment:
+      DB_PASSWORD: qwe
+      DB_USER: postgres
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: django_project_24
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+    command: celery -A config beat -l info
+
+volumes:
+  pg_data:
